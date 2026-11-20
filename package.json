@@ -1,0 +1,1 @@
+{ "type": "module", "private": true, "scripts": { "check": "node tools/index.mjs --check", "build": "node tools/index.mjs", "test": "node --test tools/*.test.mjs" } }

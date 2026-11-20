@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "apps": [
+    {
+      "id": "quote-of-day",
+      "name": "Quote of the Day",
+      "version": "1.0.1",
+      "summary": "Ten short quotes, Next and Prev move between them, Select returns to today's pick.",
+      "author": "github:iosdev29",
+      "license": "MIT",
+      "devices": [
+        "x"
+      ],
+      "forked_from": null,
+      "tapp": "apps/quote-of-day/quote-of-day-1.0.1.tapp",
+      "sha256": "888c0d7cb1166d047f52ecabd2fdb15af9c059cf868c4612bbcf4642aab35770",
+      "size": 12041,
+      "has_source": true,
+      "screenshot": null,
+      "versions": [
+        "1.0.1"
+      ]
+    },
+    {
+      "id": "tally",
+      "name": "Tally",
+      "version": "1.1.0",
+      "summary": "Next adds one, Prev takes one away, Select resets. The count survives every wake.",
+      "author": "github:iosdev29",
+      "license": "MIT",
+      "devices": [
+        "x"
+      ],
+      "forked_from": null,
+      "tapp": "apps/tally/tally-1.1.0.tapp",
+      "sha256": "be6d31a1b082fbb0b9e20d7199664cbb2cf365d057fce9879dd6441d83a69107",
+      "size": 6136,
+      "has_source": true,
+      "screenshot": null,
+      "versions": [
+        "1.1.0",
+        "1.0.0"
+      ]
+    },
+    {
+      "id": "tally-fork",
+      "name": "Tally by Five",
+      "version": "1.0.0",
+      "summary": "Tally, but Next adds five.",
+      "author": "github:iosdev29",
+      "license": "MIT",
+      "devices": [
+        "x"
+      ],
+      "forked_from": {
+        "id": "tally",
+        "version": "1.1.0"
+      },
+      "tapp": "apps/tally-fork/tally-fork-1.0.0.tapp",
+      "sha256": "7ef25df9a3f5c53f593ae50934c06457f0150f934e438b9c4d87b8726cfab8d6",
+      "size": 6179,
+      "has_source": true,
+      "screenshot": null,
+      "versions": [
+        "1.0.0"
+      ]
+    }
+  ]
+}

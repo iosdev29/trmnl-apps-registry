@@ -1,0 +1,17 @@
+name: Check apps
+# Every pull request and push: each .tapp passes the same checks as TRMNL Apps Studio and the device, and
+# index.json matches the apps.
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - run: npm run check
