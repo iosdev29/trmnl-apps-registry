@@ -1,6 +1,6 @@
 name: Check apps
-# Every pull request and push: each .tapp passes the same checks as TRMNL Apps Studio and the device, and
-# index.json matches the apps.
+# Every pull request and push: each .tapp passes the same checks as TRMNL Apps Studio and the device. index.json is
+# not part of a pull request: the Pages workflow builds it.
 on:
   pull_request:
   push:

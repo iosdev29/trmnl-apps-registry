@@ -6,7 +6,8 @@
  * @typedef {{id: string, version: string, source?: string}} ForkOrigin the app a fork was made from
  * @typedef {{summary?: string, author?: string, license?: string, source?: string, devices?: string[]}} Listing
  *   what a catalog shows: written into manifest.json, which the device reads only app_api, id, name and version of
- * @typedef {{id: string, name: string, version: string, source: string, forkedFrom?: ForkOrigin, listing?: Listing}} AppProject
+ * @typedef {{id: string, name: string, version: string, source: string, forkedFrom?: ForkOrigin, listing?: Listing,
+ *   withSource?: boolean}} AppProject withSource false: its .tapp leaves the C source out (default: in, so it can be forked)
  */
 
 /** The device's rule for app ids (apps_valid_id): [a-z0-9-], 1 to 15 characters. */
@@ -28,6 +29,39 @@ export function manifestJSON(p) {
     name: p.name, source: l.source, summary: l.summary, version: p.version,
   };
   return JSON.stringify(Object.fromEntries(Object.entries(m).filter(([, v]) => v !== undefined)));
+}
+
+/** What a catalog requires of a listing; the registry's CI refuses an app without them. */
+export const LISTING_REQUIRED = ['summary', 'author', 'license'];
+
+const LISTING_RULES = {
+  summary: 'Summary: one line of up to 140 characters',
+  author: 'Author: up to 60 characters, e.g. github:yourname',
+  license: 'License: up to 40 characters, e.g. MIT',
+  source: 'Source: an address starting with https://, up to 200 characters',
+  devices: 'Devices: x or og',
+};
+
+/** The catalog fields of a manifest (or a listing), each kept only when well formed (readTapp, the Submit sheet). */
+export function readListing(m) {
+  const text = (v, max) => (typeof v === 'string' && v.trim() && v.length <= max ? v.trim() : undefined);
+  const l = {
+    summary: text(m.summary, 140),
+    author: text(m.author, 60),
+    license: text(m.license, 40),
+    source: typeof m.source === 'string' && /^https:\/\/[^\s]+$/.test(m.source) && m.source.length <= 200 ? m.source : undefined,
+    devices: Array.isArray(m.devices) && m.devices.length && m.devices.every((d) => d === 'x' || d === 'og') ? [...new Set(m.devices)] : undefined,
+  };
+  return Object.fromEntries(Object.entries(l).filter(([, v]) => v !== undefined));
+}
+
+/** Why a listing can't go to the catalog: a required field missing, or a field readListing would drop. Empty: fine.
+ *  @param {Listing} listing @returns {string[]} */
+export function listingProblems(listing) {
+  const kept = readListing(listing);
+  return Object.keys(LISTING_RULES)
+    .filter((k) => kept[k] === undefined && (LISTING_REQUIRED.includes(k) || listing[k] !== undefined))
+    .map((k) => LISTING_RULES[k]);
 }
 
 /** An id no saved app uses yet: the wanted one, else with -2, -3... (still 15 characters at most). */

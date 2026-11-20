@@ -1,5 +1,5 @@
 name: Publish catalog
-# The catalog (index.json, the .tapp files, the gallery) on GitHub Pages. Skipped while the repository is private:
+# The catalog (index.json built from apps/, the .tapp files, the gallery) on GitHub Pages. Skipped while the repository is private:
 # Pages for private repositories needs a paid plan, and the files must be public for the catalog to load them.
 on:
   push:
@@ -24,7 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm run check
+      # index.json is built here, not committed: contributors add only a .tapp (and a screenshot).
+      - run: npm run build
       - run: mkdir site && cp -r index.html catalog.js index.json apps site/
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,7 +1,7 @@
 // Copied from TRMNL Apps Studio web/project/tapp.js by tools/sync-lib.sh: edit it there.
 // A .tapp: a zip (stored, not compressed) with manifest.json and app.wasm, as cloud.py and the device's own
 // install page read it.
-import { manifestJSON, isValidID } from './project.js';
+import { manifestJSON, isValidID, readListing } from './project.js';
 import { wasmModuleInfo, wasmProblem } from '../build/wasm-info.js';
 
 const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {
@@ -50,8 +50,8 @@ export function zipStored(files) {
 export const SOURCE_ENTRY = 'source/app.c';
 const MAX_SOURCE = 64 * 1024;
 
-/** @param {{withSource?: boolean}} [options] the source goes in unless the author turns it off */
-export const tapp = (project, wasm, { withSource = true } = {}) => zipStored([
+/** @param {{withSource?: boolean}} [options] the source goes in unless the author turned it off (project.withSource) */
+export const tapp = (project, wasm, { withSource = project.withSource !== false } = {}) => zipStored([
   { name: 'manifest.json', data: new TextEncoder().encode(manifestJSON(project)) },
   { name: 'app.wasm', data: wasm },
   ...(withSource && project.source ? [{ name: SOURCE_ENTRY, data: new TextEncoder().encode(project.source) }] : []),
@@ -99,19 +99,6 @@ export async function readTapp(bytes) {
     : undefined;
   return { manifest: { id: m.id, name: m.name.trim(), version: m.version, ...(forkedFrom && { forkedFrom }) },
     listing: readListing(m), wasm, source };
-}
-
-/** The catalog fields of a manifest, each kept only when well formed (a catalog decides which ones it requires). */
-function readListing(m) {
-  const text = (v, max) => (typeof v === 'string' && v.trim() && v.length <= max ? v.trim() : undefined);
-  const l = {
-    summary: text(m.summary, 140),
-    author: text(m.author, 60),
-    license: text(m.license, 40),
-    source: typeof m.source === 'string' && /^https:\/\/[^\s]+$/.test(m.source) && m.source.length <= 200 ? m.source : undefined,
-    devices: Array.isArray(m.devices) && m.devices.length && m.devices.every((d) => d === 'x' || d === 'og') ? [...new Set(m.devices)] : undefined,
-  };
-  return Object.fromEntries(Object.entries(l).filter(([, v]) => v !== undefined));
 }
 
 /** Name -> bytes from a zip's central directory: stored entries, and deflated ones (other zip tools). */

@@ -1,1 +1,3 @@
 node_modules/
+# built by the Pages workflow (npm run build for a local preview)
+index.json
