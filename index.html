@@ -38,14 +38,15 @@ header p { margin: 6px 0 0; color: var(--muted); max-width: 65ch; }
 <main>
   <header>
     <h1>TRMNL Apps</h1>
-    <p>Community apps for TRMNL, checked by CI against the device's own rules. Open one in TRMNL Apps Studio to try it in the simulator, install it on your TRMNL over Wi-Fi, or fork it.</p>
+    <p>Community apps for TRMNL, checked by CI against the device's own rules. Download a .tapp and install it from your TRMNL's own page (menu, Apps, Install from computer), or open its source.</p>
   </header>
   <p id="status">Loading the catalog…</p>
   <section id="apps" aria-label="Apps"></section>
 </main>
 <script type="module">
-// The Studio that opens apps: ?studio=<url> overrides it (a local Studio while testing).
-const studio = new URLSearchParams(location.search).get('studio') ?? 'http://localhost:8765/';
+// The Studio that opens apps. TRMNL Apps Studio for the web is not hosted yet, so the button shows only with
+// ?studio=<url> (a local Studio while testing).
+const studio = new URLSearchParams(location.search).get('studio');
 function el(tag, props = {}, ...children) {
   const e = Object.assign(document.createElement(tag), props);
   e.append(...children.filter(Boolean));
@@ -73,8 +74,8 @@ async function main() {
         el('span', { textContent: a.has_source ? 'source included' : 'no source' }),
         a.versions.length > 1 ? el('span', { textContent: `${a.versions.length} versions` }) : null),
       el('div', { className: 'actions' },
-        el('a', { className: 'primary', href: `${studio}?install=${encodeURIComponent(tappURL)}&sha256=${a.sha256}`, textContent: 'Open in Studio' }),
-        el('a', { href: a.tapp, textContent: 'Download .tapp' }),
+        studio ? el('a', { className: 'primary', href: `${studio}?install=${encodeURIComponent(tappURL)}&sha256=${a.sha256}`, textContent: 'Open in Studio' }) : null,
+        el('a', { className: studio ? '' : 'primary', href: a.tapp, textContent: 'Download .tapp' }),
         a.source ? el('a', { href: a.source, textContent: 'Source', rel: 'noopener' }) : null)));
   }
 }
